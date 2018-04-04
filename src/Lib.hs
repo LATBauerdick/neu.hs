@@ -18,6 +18,7 @@ import Chart
 import Control.Lens
 import Data.Generics.Labels()
 import NumHask.Prelude
+import qualified Diagrams.Prelude as D
 
 makeHistDiffExample :: IO ([Rect Double], [Rect Double])
 makeHistDiffExample = do
@@ -63,17 +64,18 @@ histDiffExample (h1, h2) =
 
 
 someFunc :: IO ()
-someFunc = -- putStrLn "someFunc"
-  fileSvg "scaleExample.svg" (#size .~ Pair 600 240 $ def) $
-  withHud
-  def
-  widescreen
-  (Rect 0 20 0 2.0)
-  (lineChart (repeat def))
-  (vlineOneD ((0.1*) <$> [0..20]))
+someFunc = do
+  putStrLn "someFunc"
+  -- fileSvg "scaleExample.svg" (#size .~ Pair 600 240 $ def) $
+  -- withHud
+  -- def
+  -- widescreen
+  -- (Rect 0 20 0 2.0)
+  -- (lineChart (repeat def))
+  -- (vlineOneD ((0.1*) <$> [0..20]))
 
-  putStrLn ("histDiffExample" :: Text)
-  hs <- makeHistDiffExample
-  fileSvg "other/histDiffExample.svg" (#size .~ Pair 600 600 $ def) $
-          histDiffExample hs
+  -- putStrLn ("histDiffExample" :: Text)
+  -- hs <- makeHistDiffExample
+  -- fileSvg "other/histDiffExample.svg" (#size .~ Pair 600 600 $ def) $
+  --         histDiffExample hs
 

@@ -29,6 +29,7 @@ library:
     - chart-unit
     - lens
     - generic-lens-labels
+    - diagrams
 
 executables:
   neu2-exe:
