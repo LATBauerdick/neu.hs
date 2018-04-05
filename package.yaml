@@ -30,6 +30,7 @@ library:
     - lens
     - generic-lens-labels
     - diagrams
+    - diagrams-lib
 
 executables:
   neu2-exe:
@@ -54,3 +55,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - neu2
+    - hspec
+    - QuickCheck
