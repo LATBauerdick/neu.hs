@@ -23,12 +23,12 @@ import System.Random.MWC ( Gen, create )
 import System.Random.MWC.Probability ( standard, samples )
 
 import Control.Monad.Primitive (PrimState)
--- import Data.List ((!!), head, zipWith3)
+import Data.List ( zipWith3 ) --(!!), head, zipWith3)
 -- import Data.Time
 -- import Data.Time.Calendar.WeekDate
 -- import qualified Diagrams.TwoD.Text
 -- import Formatting
-import NumHask.Histogram as NH ( fill, makeRects, DealOvers(..) )
+import NumHask.Histogram as NH ( fill, makeRects, regular, DealOvers(..) )
 -- import NumHask.Prelude as P
 
 -- * example data generation
@@ -36,12 +36,21 @@ import NumHask.Histogram as NH ( fill, makeRects, DealOvers(..) )
 rvs :: Gen (PrimState IO) -> Int -> IO [Double]
 rvs gen n = samples n standard gen
 
+-- This generates n V2 random variates where the x and y parts are correlated.
+rvsCorr :: Gen (PrimState IO) -> Int -> Double -> IO [C.Pair Double]
+rvsCorr gen n c = do
+  s0 <- rvs gen n
+  s1 <- rvs gen n
+  let s1' = zipWith (\x y -> c * x + sqrt (1 - c * c) * y) s0 s1
+  pure $ zipWith C.Pair s0 s1'
+
 makeHistExample :: IO [C.Rect Double]
 makeHistExample = do
   g <- create
   xys <- rvs g 1000
   let cuts = C.grid C.OuterPos (C.Range -15.0 15.0) 50
   pure $ NH.makeRects NH.IgnoreOvers (NH.fill cuts ((1.5 *) <$> xys))
+
 
 histExample :: [C.Rect Double] -> C.Chart b
 histExample h1 =
@@ -72,17 +81,64 @@ histExample h1 =
           ]
           botAspect
           (C.Ranges rx deltary)
-          [deltah]) <>
-        C.hud C.def botAspect (C.Ranges rx deltary)
+          [deltah])
+       <> C.hud C.def botAspect (C.Ranges rx deltary)
+
+-- * scatter chart
+mkScatterData :: IO [[C.Pair Double]]
+mkScatterData = do
+  g <- create
+  xys <- rvsCorr g 1000 0.7
+  xys1 <- rvsCorr g 1000 -0.5
+  pure
+    [ (\(C.Pair x y) -> C.Pair (x ^^ 2 + 3 * x - 1) (y + 1)) <$> xys
+    , (\(C.Pair x y) -> C.Pair (x ^^ 2 + 3 * x + 1) y) <$> xys1
+    ]
+
+scatterHistExample :: [[C.Pair Double]] -> C.Chart b
+scatterHistExample xys =
+  D.beside
+    (D.r2 (1, 0))
+    (D.beside (D.r2 (0, -1)) (sc1 <> hud1) (D.reflectY histx))
+    (D.reflectY $ D.rotateBy (3 / 4) histy)
+  where
+    sopts =
+      zipWith3
+        (\x y z -> C.GlyphOptions x y (C.ucolor 0 0 0 0) 0 z)
+        [0.01, 0.02, 0.03]
+        ((\x -> C.withOpacity (C.d3Colors1 x) 0.3) <$> [6, 8])
+        [C.Circle, C.Triangle, C.Square]
+    mainAspect = C.Rect -0.5 0.5 -0.5 0.5
+    minorAspect = C.Rect -0.5 0.5 -0.1 0.1
+    sc1 = C.glyphChart_ sopts mainAspect xys
+    histx = C.rectChart_ defHist minorAspect hx
+    histy = C.rectChart_ defHist minorAspect hy
+    hud1 =
+      C.hud
+        (#axes .~ [#place .~ C.PlaceTop $ #label . #orientation .~ C.Pair 0 1 $ C.def] $
+         C.def)
+        mainAspect
+        (C.range xys)
+    defHist =
+      (\x -> #borderSize .~ 0 $ #color .~ C.d3Colors1 x `C.withOpacity` 0.5 $ C.def) <$>
+      [6, 8]
+    makeHist n = makeRects NH.IgnoreOvers . NH.regular n
+    hx = makeHist 50 . fmap (view D._x) <$> xys
+    hy = makeHist 50 . fmap (view D._y) <$> xys
 
 
 someFunc :: IO ()
 someFunc = do
   putStrLn ("someFunc" :: Text)
+
   putStrLn ("histExample" :: Text)
   hs <- makeHistExample
   C.fileSvg "histExample.svg" (#size .~ C.Pair 600 600 $ C.def) $
     histExample hs
+
+  putStrLn ("scatterHistExample" :: Text)
+  xys <- mkScatterData
+  C.fileSvg "scatterHistExample.svg" C.def (scatterHistExample xys)
 
 
   -- C.fileSvg "scaleExample.svg" (#size .~ C.Pair 600 240 $ C.def) $
