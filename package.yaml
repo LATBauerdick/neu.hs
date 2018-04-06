@@ -26,6 +26,12 @@ library:
   source-dirs: src
   dependencies:
     - numhask
+    - numhask-histogram
+    - primitive
+    - mwc-random
+    - mwc-probability
+      ## - formatting
+      ## - time
     - chart-unit
     - lens
     - generic-lens-labels

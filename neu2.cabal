@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 175a894438e789dd3ccaa71f40bedd291902967af41be0735188ca4d7757faad
+-- hash: 7b492ab4515ea45161b247b5e6f5ac458125c44d70375e6076e95036428f7096
 
 name:           neu2
 version:        0.1.0.0
@@ -39,7 +39,11 @@ library
     , diagrams-lib
     , generic-lens-labels
     , lens
+    , mwc-probability
+    , mwc-random
     , numhask
+    , numhask-histogram
+    , primitive
   default-language: Haskell2010
 
 executable neu2-exe
