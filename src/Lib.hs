@@ -140,7 +140,6 @@ someFunc = do
   putStrLn ("scatterHistExample" :: Text)
   xys <- mkScatterData
   C.fileSvg "scatterHistExample.svg" C.def (scatterHistExample xys)
-  let cmd:args = [ "./ic", "scatterHistExample.svg" ]
   _ <- rawSystem "./ic" [ "scatterHistExample.svg" ]
   pure ()
 
