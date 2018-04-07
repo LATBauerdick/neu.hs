@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7b492ab4515ea45161b247b5e6f5ac458125c44d70375e6076e95036428f7096
+-- hash: ee8835ad82907e4dcff0a41e0699b18c87189e5990e4433e4461d521fd26fcea
 
 name:           neu2
 version:        0.1.0.0
@@ -44,6 +44,7 @@ library
     , numhask
     , numhask-histogram
     , primitive
+    , process
   default-language: Haskell2010
 
 executable neu2-exe

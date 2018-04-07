@@ -25,6 +25,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+    - process
     - numhask
     - numhask-histogram
     - primitive

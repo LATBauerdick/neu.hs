@@ -21,6 +21,7 @@ import NumHask.Prelude as P
 import qualified Diagrams.Prelude as D
 import System.Random.MWC ( Gen, create )
 import System.Random.MWC.Probability ( standard, samples )
+import System.Process ( rawSystem )
 
 import Control.Monad.Primitive (PrimState)
 import Data.List ( zipWith3 ) --(!!), head, zipWith3)
@@ -139,7 +140,9 @@ someFunc = do
   putStrLn ("scatterHistExample" :: Text)
   xys <- mkScatterData
   C.fileSvg "scatterHistExample.svg" C.def (scatterHistExample xys)
-
+  let cmd:args = [ "./ic", "scatterHistExample.svg" ]
+  _ <- rawSystem "./ic" [ "scatterHistExample.svg" ]
+  pure ()
 
   -- C.fileSvg "scaleExample.svg" (#size .~ C.Pair 600 240 $ C.def) $
   -- withHud
