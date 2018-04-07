@@ -1,3 +1,4 @@
 
-/home/vagrant/.nix-profile/bin/convert $1 png:- | /home/vagrant/bin/imgcat
+# /home/vagrant/.nix-profile/bin/convert $1 png:- | /home/vagrant/bin/imgcat
+~/.nix-profile/bin/convert $1 png:- | ~/bin/imgcat
 
